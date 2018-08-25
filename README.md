@@ -1,2 +1,2 @@
 # heuristics-metaheuristics
-Programming Assingments of Heuristics and Metaheuristics
+Programming Assignments of Heuristics and Metaheuristics
