@@ -54,17 +54,6 @@ int nearestNeighbor(Graph &g, int source, std::vector<int> &tour) {
 	return sum;
 }
 
-std::vector<int> twoOptSwap(std::vector<int> tour, int i, int k) {
-	int tour_size = tour.size();
-	std::vector<int> new_tour;
-
-	for (int j = 0; j < i; ++j) new_tour.push_back(tour[j]);
-	for (int j = k; j >= i; --j) new_tour.push_back(tour[j]); 
-	for (int j = k+1; j < tour_size; ++j) new_tour.push_back(tour[j]);
-
-	return new_tour;
-}
-
 int tourDistance(Graph &g, std::vector<int> &tour) {
 	std::vector < std::vector < std::pair<int, int> > > adj_list = g.getAdjList();
 	int distance = 0;
@@ -93,6 +82,17 @@ int tourDistanceM(std::vector< std::vector<int> > &g, std::vector<int> tour) {
 	distance += g[tour[0]][tour[tour_size - 1]];
 
 	return distance;
+}
+
+std::vector<int> twoOptSwap(std::vector<int> tour, int i, int k) {
+	int tour_size = tour.size();
+	std::vector<int> new_tour;
+
+	for (int j = 0; j < i; ++j) new_tour.push_back(tour[j]);
+	for (int j = k; j >= i; --j) new_tour.push_back(tour[j]); 
+	for (int j = k+1; j < tour_size; ++j) new_tour.push_back(tour[j]);
+
+	return new_tour;
 }
 
 int twoOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int initial_d) {
@@ -146,7 +146,7 @@ std::vector<int> threeOpt(std::vector< std::vector<int> > &g, std::vector<int> &
 		return threeOpt(g, tour, initial_d);
 	}
 
-	return new_tour;
+	return tour;
 }
 
 int threeOptSwap(std::vector< std::vector<int> > &g, std::vector<int> &tour, std::vector<int> &new_tour, int i, int j, int k) {
@@ -241,7 +241,7 @@ int threeOptSwap(std::vector< std::vector<int> > &g, std::vector<int> &tour, std
 			new_tour[m] = (tour[l]);
 			m++;
 		}
-		
+
 		return -d0 + d3;
 	}	
 
