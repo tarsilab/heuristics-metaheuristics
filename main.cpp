@@ -30,7 +30,6 @@ int main(int argc, char *argv[]) {
 		graphM[destination - 1][source - 1] = weight;
 	}
 
-	//printGraphM(graphM, vertices);
 
 	std::vector<int> tour;
 	
@@ -38,24 +37,21 @@ int main(int argc, char *argv[]) {
 	int tsp = nearestNeighbor(graph, 0, tour);
 	clock_t end = clock();
 
+	std::cout << tsp << "\n";
 	double time_secs = double(end - begin)/CLOCKS_PER_SEC;
-	//std::cout << tsp << "\n";
-	//graph.printGraph();
-
-	for (auto & i : tour) std::cout << i + 1<< " ";
-	std::cout << "\n";	
 	
-	/*
-	std::vector<int> new_tour = twoOptSwap(tour, 2, 5);
-	for (auto & i : new_tour) std::cout << i << " ";
-	std::cout << "\n";
-	*/
-
+	
 	int tsp_tour = twoOpt(graphM, tour, tsp);
 	std::cout << tsp_tour << "\n";
 
-	//int distance = tourDistance(graph, tour);
-	//std::cout << distance << "\n";
+	std::vector<int> tsp_3opt = threeOpt(graphM, tour, tsp);
 	
+	/*
+	for (auto &i : tsp_3opt) std::cout << i + 1 << " ";
+	std::cout << "\n";
+	*/
+	
+	std::cout << tourDistanceM(graphM, tsp_3opt) << "\n";
+
 	return 0;
 }  
