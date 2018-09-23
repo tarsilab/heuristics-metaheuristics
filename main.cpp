@@ -31,22 +31,10 @@ int main(int argc, char *argv[]) {
 
 
 	std::vector<int> tour;
-	
-	clock_t begin = clock(); 
+
 	int tsp = nearestNeighbor(graph, 0, tour);
-	clock_t end = clock();
-
-	std::cout << tsp << "\n";
-	double time_secs = double(end - begin)/CLOCKS_PER_SEC;
-
-	int original_distance = tsp;
-	std::vector<int> original_tour = tour;
-		
-	runTwoOpt(graphM, tour, tsp);
+	vnd(graphM, tour, tsp);
 	std::cout << tsp << "\n";
 	
-	runThreeOpt(graphM, original_tour, original_distance);
-	std::cout << original_distance << "\n";
-
 	return 0;
 }  

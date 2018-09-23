@@ -60,7 +60,6 @@ int tourDistance(Graph &g, std::vector<int> &tour) {
 		}
 	}
 
-	//std::cout << tour.back() << " " << tour.front() << "\n";
 	for (auto &j : adj_list[tour.back() - 1]) {
 		if (j.first == (tour.front() - 1)) distance += j.second;
 	}
@@ -81,6 +80,11 @@ int tourDistanceM(std::vector< std::vector<int> > &g, std::vector<int> tour) {
 }
 
 std::vector<int> twoOptSwap(std::vector<int> tour, int i, int k) {
+
+	/*
+		Makes the only possible change to two edges. 
+	*/
+
 	int tour_size = tour.size();
 	std::vector<int> new_tour;
 
@@ -94,6 +98,10 @@ std::vector<int> twoOptSwap(std::vector<int> tour, int i, int k) {
 bool twoOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &best_distance) {
 	int tour_size = tour.size();
 	
+	/*
+		Calls twoOptSwap for every combination of two edges of the graph.
+	*/
+
 	for (int i = 1; i < tour_size - 1; ++i) {
 		for (int j = i + 1; j < tour_size; ++j) {
 
@@ -118,6 +126,11 @@ void runTwoOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &
 }
 
 bool threeOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &best_distance) {
+
+	/*
+		Calls threeOptSwap for every combination of three edges of the graph.
+	*/
+
 	int tour_size = tour.size();
 	
 	for (int i = 1; i < tour_size - 3; ++i) {
@@ -142,6 +155,11 @@ void runThreeOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int
 
 int threeOptSwap(std::vector< std::vector<int> > &g, std::vector<int> &tour, int i, int j, int k) {
 	
+	/*
+		Calculates the cost of all of the 7 possible changes to 3 edges and returns the tour created
+		by the change with best cost and the difference of the cost of this change. 
+	*/
+
 	int tour_size = tour.size();
 	int d0 = g[tour[i]][tour[i+1]] + g[tour[j]][tour[j+1]] + g[tour[k]][tour[(k+1) % tour_size]];
 	int d1 = g[tour[i]][tour[j]] + g[tour[i+1]][tour[j+1]] + g[tour[k]][tour[(k+1) % tour_size]];
@@ -193,4 +211,43 @@ int threeOptSwap(std::vector< std::vector<int> > &g, std::vector<int> &tour, int
 	}
 
 	return d0;	
+}
+
+void vnd(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &distance) {
+	
+	/* 
+		VND
+		Gets a initial solution as input and uses this to call the 2-Opt local search.
+		Searches the 2-opt neighborhood first and when it doesn't have improvements anymore,
+		searches the 3-opt neighborhood.
+	*/
+
+	std::vector<int> original_tour = tour;
+	int original_distance = distance;
+	int neigh = 2;
+	int i = 0;
+
+	while (i < neigh) {
+		if (i == 0) {
+			runTwoOpt(g, tour, distance);
+
+			if (distance < original_distance) {
+				original_distance = distance;
+				i = 0;
+			}
+
+			else i++;
+		}
+
+		if (i == 1) {
+			runThreeOpt(g, tour, distance);
+
+			if (distance < original_distance) {
+				original_distance = distance;
+				i = 1;
+			}
+
+			else i++;
+		}
+	}
 }

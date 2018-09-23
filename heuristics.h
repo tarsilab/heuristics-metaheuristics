@@ -15,3 +15,4 @@ void runTwoOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &
 bool threeOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &best_distance);
 void runThreeOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &distance);
 int threeOptSwap(std::vector< std::vector<int> > &g, std::vector<int> &tour, int i, int j, int k);
+void vnd(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &distance);
