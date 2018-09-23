@@ -1,4 +1,3 @@
-#include <iostream>
 #include <ctime>
 #include "graph.h"
 #include "heuristics.h"
@@ -39,19 +38,15 @@ int main(int argc, char *argv[]) {
 
 	std::cout << tsp << "\n";
 	double time_secs = double(end - begin)/CLOCKS_PER_SEC;
-	
-	
-	int tsp_tour = twoOpt(graphM, tour, tsp);
-	std::cout << tsp_tour << "\n";
 
-	std::vector<int> tsp_3opt = threeOpt(graphM, tour, tsp);
+	int original_distance = tsp;
+	std::vector<int> original_tour = tour;
+		
+	runTwoOpt(graphM, tour, tsp);
+	std::cout << tsp << "\n";
 	
-	/*
-	for (auto &i : tsp_3opt) std::cout << i + 1 << " ";
-	std::cout << "\n";
-	*/
-	
-	std::cout << tourDistanceM(graphM, tsp_3opt) << "\n";
+	runThreeOpt(graphM, original_tour, original_distance);
+	std::cout << original_distance << "\n";
 
 	return 0;
 }  
