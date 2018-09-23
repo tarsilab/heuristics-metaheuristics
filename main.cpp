@@ -2,14 +2,13 @@
 #include "graph.h"
 #include "heuristics.h"
 
-void printGraphM(std::vector< std::vector<int> > &g, int v) {
-	for (int i = 0; i < v; ++i) {
-		for (int j = 0; j < v; ++j) {
-			std::cout << g[i][j] << " ";
-		}
-		std::cout << "\n";
-	}
-}
+/*
+	Compile (use Makefile!):
+		make
+
+	Run:
+		./tp1 < input
+*/
 
 int main(int argc, char *argv[]) {
 
@@ -34,7 +33,8 @@ int main(int argc, char *argv[]) {
 
 	int tsp = nearestNeighbor(graph, 0, tour);
 	vnd(graphM, tour, tsp);
-	std::cout << tsp << "\n";
 	
+	std::cout << tsp << "\n";
+
 	return 0;
 }  

@@ -133,9 +133,9 @@ bool threeOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &b
 
 	int tour_size = tour.size();
 	
-	for (int i = 1; i < tour_size - 3; ++i) {
-		for (int j = i + 1; j < tour_size - 2; ++j) {
-			for (int k = j + 1; k < tour_size - 1; ++k) {
+	for (int i = 1; i < tour_size - 2; ++i) {
+		for (int j = i + 1; j < tour_size - 1; ++j) {
+			for (int k = j + 1; k < tour_size; ++k) {
 				int new_distance = threeOptSwap(g, tour, i, j, k);
 				
 				if (new_distance < 0) {
