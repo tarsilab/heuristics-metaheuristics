@@ -106,7 +106,7 @@ bool twoOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &bes
 		for (int j = i + 1; j < tour_size; ++j) {
 
 			std::vector<int> new_tour = twoOptSwap(tour, i, j);
-				
+			
 			int new_distance = 0;
 			if (j == tour_size - 1) new_distance = best_distance - g[tour[i-1]][tour[i]] - g[tour[j]][tour[0]] + g[tour[i-1]][tour[j]] + g[tour[0]][tour[i]];
 			else new_distance = best_distance - g[tour[i-1]][tour[i]] - g[tour[j]][tour[j+1]] + g[tour[i-1]][tour[j]] + g[tour[j+1]][tour[i]];
@@ -119,10 +119,6 @@ bool twoOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &bes
 		}
 	}
 	return false;
-}
-
-void runTwoOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &distance) {
-	while(twoOpt(g, tour, distance));
 }
 
 bool threeOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &best_distance) {
@@ -147,10 +143,6 @@ bool threeOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &b
 	}
 
 	return false;
-}
-
-void runThreeOpt(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &distance) {
-	while(threeOpt(g, tour, distance));
 }
 
 int threeOptSwap(std::vector< std::vector<int> > &g, std::vector<int> &tour, int i, int j, int k) {
@@ -226,11 +218,13 @@ void vnd(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &distan
 	int original_distance = distance;
 	int neigh = 2;
 	int i = 0;
+	int v1 = 0;
+	int v2 = 0;
 
 	while (i < neigh) {
 		if (i == 0) {
-			runTwoOpt(g, tour, distance);
-
+			while(twoOpt(g, tour, distance));
+			
 			if (distance < original_distance) {
 				original_distance = distance;
 				i = 0;
@@ -240,7 +234,7 @@ void vnd(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &distan
 		}
 
 		if (i == 1) {
-			runThreeOpt(g, tour, distance);
+			while(threeOpt(g, tour, distance));
 
 			if (distance < original_distance) {
 				original_distance = distance;
@@ -249,5 +243,70 @@ void vnd(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &distan
 
 			else i++;
 		}
+	}
+}
+
+void printTabuList(std::vector< std::vector<int> > &tl, int vertices) {
+	for (int i = 0; i < vertices; ++i) {
+		for (int j = 0; j < vertices; ++j) {
+			std::cout << tl[i][j] << " ";
+		}
+		std::cout << "\n";
+	}
+}
+
+
+void tabuSearch(std::vector< std::vector<int> > &g, int vertices, std::vector<int> &tour, int &distance) {
+	
+	std::vector<int> best_tour = tour;
+	std::unordered_map< int, std::vector<int> > tabu_list;
+
+	int threshold = 0;
+	int best_distance = distance;
+	int tour_size = tour.size();
+	int counter = 0;
+	int first_counter = 0;
+	int tl_size = 0;
+
+	while (threshold < 50) {		
+		for (int i = 1; i < tour_size - 1; ++i) {
+			for (int j = i + 1; j < tour_size; ++j) {
+
+				std::vector<int> new_tour = twoOptSwap(tour, i, j);
+
+				int new_distance = 0;
+				if (j == tour_size - 1) new_distance = best_distance - g[tour[i-1]][tour[i]] - g[tour[j]][tour[0]] + g[tour[i-1]][tour[j]] + g[tour[0]][tour[i]];
+				else new_distance = best_distance - g[tour[i-1]][tour[i]] - g[tour[j]][tour[j+1]] + g[tour[i-1]][tour[j]] + g[tour[j+1]][tour[i]];
+					
+				if ((new_distance < best_distance)) {
+				   	auto it = std::find_if(tabu_list.begin(), tabu_list.end(),
+                    [&new_tour](const std::pair<int, std::vector<int> > &p) {
+                        return p.second == new_tour;
+                    });		
+
+                    if (it == tabu_list.end()) {
+                    	
+                    	// Solution is not on tabu_list
+                    	if (tl_size > 50) {
+                    		tabu_list.erase(first_counter);
+                    		first_counter++;
+                    		tl_size--;
+                    	}
+
+                    	tabu_list.insert(std::make_pair(counter, new_tour));
+                    	counter++;
+                    	tour = new_tour;
+                    	best_distance = new_distance;
+                    	distance = best_distance;
+                    	tl_size++;
+
+                    	break;
+                    }
+                    
+				} 
+			}
+		}	
+
+		threshold++;
 	}
 }
