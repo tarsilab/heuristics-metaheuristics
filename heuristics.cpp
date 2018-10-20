@@ -50,35 +50,6 @@ int nearestNeighbor(Graph &g, int source, std::vector<int> &tour) {
 	return sum;
 }
 
-int tourDistance(Graph &g, std::vector<int> &tour) {
-	std::vector < std::vector < std::pair<int, int> > > adj_list = g.getAdjList();
-	int distance = 0;
-	
-	for (int i = 0; i < tour.size() - 1; ++i) {
-		for (auto &j : adj_list[tour[i] - 1]) {
-			if (j.first == (tour[i+1] - 1)) distance += j.second;
-		}
-	}
-
-	for (auto &j : adj_list[tour.back() - 1]) {
-		if (j.first == (tour.front() - 1)) distance += j.second;
-	}
-
-	return distance;
-}
-
-int tourDistanceM(std::vector< std::vector<int> > &g, std::vector<int> tour) {
-	int distance = 0;
-	int tour_size = tour.size();
-	for (int i = 0; i < tour_size - 1; ++i) {
-		distance += g[tour[i]][tour[i+1]];
-	}
-
-	distance += g[tour[0]][tour[tour_size - 1]];
-
-	return distance;
-}
-
 std::vector<int> twoOptSwap(std::vector<int> tour, int i, int k) {
 
 	/*
@@ -246,18 +217,17 @@ void vnd(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &distan
 	}
 }
 
-void printTabuList(std::vector< std::vector<int> > &tl, int vertices) {
-	for (int i = 0; i < vertices; ++i) {
-		for (int j = 0; j < vertices; ++j) {
-			std::cout << tl[i][j] << " ";
-		}
-		std::cout << "\n";
-	}
-}
-
-
 void tabuSearch(std::vector< std::vector<int> > &g, int vertices, std::vector<int> &tour, int &distance) {
 	
+	/*
+		Tabu Search:
+		Gets a initial solution as input and uses this to call the 2-Opt local search with tabu search.
+		When we find a feasible solution, we check if it's on the tabu list. If it is, we search for a
+		new solution. If it's not we update current solution and add current solution to tabu list.
+		This runs for a number of iterations 
+
+	*/
+
 	std::vector<int> best_tour = tour;
 	std::unordered_map< int, std::vector<int> > tabu_list;
 
@@ -285,7 +255,7 @@ void tabuSearch(std::vector< std::vector<int> > &g, int vertices, std::vector<in
                     });		
 
                     if (it == tabu_list.end()) {
-                    	
+                                        	
                     	// Solution is not on tabu_list
                     	if (tl_size > 50) {
                     		tabu_list.erase(first_counter);
@@ -299,10 +269,8 @@ void tabuSearch(std::vector< std::vector<int> > &g, int vertices, std::vector<in
                     	best_distance = new_distance;
                     	distance = best_distance;
                     	tl_size++;
-
                     	break;
                     }
-                    
 				} 
 			}
 		}	
