@@ -224,7 +224,7 @@ void tabuSearch(std::vector< std::vector<int> > &g, int vertices, std::vector<in
 		Gets a initial solution as input and uses this to call the 2-Opt local search with tabu search.
 		When we find a feasible solution, we check if it's on the tabu list. If it is, we search for a
 		new solution. If it's not we update current solution and add current solution to tabu list.
-		This runs for a number of iterations 
+		This runs for a number of iterations and the tabu list also has a maximum size. 
 
 	*/
 
@@ -238,7 +238,9 @@ void tabuSearch(std::vector< std::vector<int> > &g, int vertices, std::vector<in
 	int first_counter = 0;
 	int tl_size = 0;
 
-	while (threshold < 50) {		
+	while (threshold < 50) {	
+
+		// 2-Opt heuristic	
 		for (int i = 1; i < tour_size - 1; ++i) {
 			for (int j = i + 1; j < tour_size; ++j) {
 
@@ -247,22 +249,28 @@ void tabuSearch(std::vector< std::vector<int> > &g, int vertices, std::vector<in
 				int new_distance = 0;
 				if (j == tour_size - 1) new_distance = best_distance - g[tour[i-1]][tour[i]] - g[tour[j]][tour[0]] + g[tour[i-1]][tour[j]] + g[tour[0]][tour[i]];
 				else new_distance = best_distance - g[tour[i-1]][tour[i]] - g[tour[j]][tour[j+1]] + g[tour[i-1]][tour[j]] + g[tour[j+1]][tour[i]];
-					
+			
 				if ((new_distance < best_distance)) {
+
+					// When we find a feasible solution, check if solution is already on tabu_list
+
 				   	auto it = std::find_if(tabu_list.begin(), tabu_list.end(),
                     [&new_tour](const std::pair<int, std::vector<int> > &p) {
                         return p.second == new_tour;
-                    });		
+                    });
 
                     if (it == tabu_list.end()) {
-                                        	
                     	// Solution is not on tabu_list
+
+                    	// If tabu_list is full, erase one solution
+                    	// Solutions are deleted from tabu_list, following the FIFO approach
                     	if (tl_size > 50) {
                     		tabu_list.erase(first_counter);
                     		first_counter++;
                     		tl_size--;
                     	}
 
+                    	// Add solution to tabu_list
                     	tabu_list.insert(std::make_pair(counter, new_tour));
                     	counter++;
                     	tour = new_tour;
