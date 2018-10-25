@@ -286,3 +286,67 @@ void tabuSearch(std::vector< std::vector<int> > &g, int vertices, std::vector<in
 		threshold++;
 	}
 }
+
+std::vector<int> greedyRandomConstruct(std::vector< std::vector<int> > &g, int vertices, int alpha, int &seed, int &cost) {
+	
+	cost = 0;
+
+	std::vector<int> tour;
+	std::unordered_set<int> candidates;
+	for (int i = 0; i < vertices; ++i) candidates.insert(i);
+
+	int source = rand() % candidates.size();
+	int original_source = source;
+	tour.push_back(source);
+	candidates.erase(source);
+
+	while (!candidates.empty())	{
+		int c_min = std::numeric_limits<int>::max();
+		int c_max = std::numeric_limits<int>::min();
+		
+		for (auto &i : candidates) {
+			if (g[source][i] < c_min) c_min = g[source][i];
+			if (g[source][i] > c_max) c_max = g[source][i];
+		}
+
+		std::vector< std::pair<int, int> > rcl;
+
+		for (auto &i : candidates) {
+			if (g[source][i] <= c_min + alpha * (c_max - c_min)) {
+				rcl.push_back(std::make_pair(i, g[source][i]));
+			}
+		}
+
+		srand(seed);
+		int random_c = rand() % rcl.size();
+
+		source = rcl[random_c].first;
+		tour.push_back(rcl[random_c].first);
+		cost += rcl[random_c].second;
+		candidates.erase(rcl[random_c].first);
+	}
+
+	cost += g[original_source][tour[tour.size() - 1]];
+	return tour;
+}
+
+
+int grasp(std::vector< std::vector<int> > &g, int vertices, int alpha, int &seed, int &cost) {
+
+	int max_it = 50;
+	int best_cost = 0;
+	std::vector<int> best_tour = greedyRandomConstruct(g, vertices, alpha, seed, best_cost);
+
+	cost = 0;
+
+	for (int i = 0; i < max_it; ++i) {
+		seed++;
+		std::vector<int> fs = greedyRandomConstruct(g, vertices, alpha, seed, cost);
+		//for (int &e : fs) std::cout << e << " ";
+		//std::cout << "\n";
+		vnd(g, fs, cost);
+		if (cost < best_cost) best_cost = cost;
+	}
+
+	return best_cost;
+}

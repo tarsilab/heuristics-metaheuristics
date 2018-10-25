@@ -28,12 +28,14 @@ int main(int argc, char *argv[]) {
 		graphM[destination - 1][source - 1] = weight;
 	}
 
-	std::vector<int> tour;
-
-	int tsp = nearestNeighbor(graph, 0, tour);
-	//vnd(graphM, tour, tsp);
-	tabuSearch(graphM, vertices, tour, tsp);
+	int cost = 0;
+	int seed = 1;
+	int tsp = grasp(graphM, vertices, 0.5, seed, cost);
 	std::cout << tsp << "\n";
+	//int tsp = nearestNeighbor(graph, 0, tour);
+	//vnd(graphM, tour, tsp);
+	//tabuSearch(graphM, vertices, tour, tsp);
+	//std::cout << tsp << "\n";
 
 	return 0;
 }  
