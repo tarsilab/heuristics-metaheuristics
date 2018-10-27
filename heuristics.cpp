@@ -333,19 +333,18 @@ std::vector<int> greedyRandomConstruct(std::vector< std::vector<int> > &g, int v
 
 int grasp(std::vector< std::vector<int> > &g, int vertices, int alpha, int &seed, int &cost) {
 
-	int max_it = 50;
 	int best_cost = 0;
 	std::vector<int> best_tour = greedyRandomConstruct(g, vertices, alpha, seed, best_cost);
 
 	cost = 0;
 
-	for (int i = 0; i < max_it; ++i) {
+	for (int i = 0; i < 80; ++i) {
 		seed++;
 		std::vector<int> fs = greedyRandomConstruct(g, vertices, alpha, seed, cost);
-		//for (int &e : fs) std::cout << e << " ";
-		//std::cout << "\n";
 		vnd(g, fs, cost);
-		if (cost < best_cost) best_cost = cost;
+		if (cost < best_cost) {
+			best_cost = cost;
+		}
 	}
 
 	return best_cost;

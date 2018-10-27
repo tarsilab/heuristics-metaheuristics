@@ -30,8 +30,10 @@ int main(int argc, char *argv[]) {
 
 	int cost = 0;
 	int seed = 1;
+
 	int tsp = grasp(graphM, vertices, 0.5, seed, cost);
-	std::cout << tsp << "\n";
+	std::cout << tsp << " " << "\n";
+	
 	//int tsp = nearestNeighbor(graph, 0, tour);
 	//vnd(graphM, tour, tsp);
 	//tabuSearch(graphM, vertices, tour, tsp);
