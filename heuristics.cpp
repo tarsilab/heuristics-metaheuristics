@@ -289,6 +289,16 @@ void tabuSearch(std::vector< std::vector<int> > &g, int vertices, std::vector<in
 
 std::vector<int> greedyRandomConstruct(std::vector< std::vector<int> > &g, int vertices, int alpha, int &seed, int &cost) {
 	
+	/*
+		Greedy Random Solution.
+		Chooses first vertex randomly. Find edge of max cost (c_max) and min cost (c_min) that connects the last vertex 
+		to one that wasn't visited yet. 
+		Adds to list of candidates every edge with cost <= c_min + alpha * (c_max - c_min).
+		Chooses one vertex from the list of candidates randomly.
+		Do this until every vertex has been visited. 
+	*/
+
+
 	cost = 0;
 
 	std::vector<int> tour;
@@ -333,6 +343,11 @@ std::vector<int> greedyRandomConstruct(std::vector< std::vector<int> > &g, int v
 
 int grasp(std::vector< std::vector<int> > &g, int vertices, int alpha, int &seed, int &cost) {
 
+	/*
+		Creates a first random solution.
+		Local search using VND with 2-Opt and 3-Opt
+	*/
+
 	int best_cost = 0;
 	std::vector<int> best_tour = greedyRandomConstruct(g, vertices, alpha, seed, best_cost);
 
@@ -348,4 +363,74 @@ int grasp(std::vector< std::vector<int> > &g, int vertices, int alpha, int &seed
 	}
 
 	return best_cost;
+}
+
+void perturb(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &cost) {
+
+	/*
+		Perturbs a solution.
+		Ramdonly choses two cities in the tour and swap their positions.
+	*/
+
+
+	int tour_size = tour.size();
+
+	int v1, v2;
+	
+	while(true) {	
+		v1 = rand() % tour_size;
+		v2 = rand() % tour_size;
+
+		if (std::abs(v1 - v2) > 1) break;
+	}
+
+
+	if (v1 == 0 && v2 == (tour_size - 1)) {
+		cost -= g[tour[v1]][tour[v1+1]];
+		cost -= g[tour[v2-1]][tour[v2]];
+		cost += g[tour[v2]][tour[v1+1]];
+		cost += g[tour[v2-1]][tour[v1]];
+	}
+
+	else {
+		cost -= g[tour[v1==0?(tour_size-1):v1-1]][tour[v1]];
+		cost -= g[tour[v1]][tour[(v1 + 1) % tour_size]];
+		cost -= g[tour[v2==0?(tour_size-1):v2-1]][tour[v2]];
+		cost -= g[tour[v2]][tour[(v2 + 1) % tour_size]];
+		cost += g[tour[v1==0?(tour_size-1):v1-1]][tour[v2]];
+		cost += g[tour[v2]][tour[(v1 + 1) % tour_size]];
+		cost += g[tour[v2==0?(tour_size-1):v2-1]][tour[v1]];
+		cost += g[tour[v1]][tour[(v2 + 1) % tour_size]];
+	}
+
+	int temp = tour[v1]; 
+	tour[v1] = tour[v2];
+	tour[v2] = temp;
+}
+
+
+void ils(std::vector< std::vector<int> > &g, std::vector<int> &tour, int &best_cost) {
+
+	/*
+		ILS with VND as local search.
+		Perturbs a solution and calls VND for it.
+		Runs for a fixed number of iterations.
+	*/
+
+	srand(0);
+	
+	int max_iter = 100;
+	vnd(g, tour, best_cost);
+	int curr_cost = best_cost;
+	
+	for (int i = 0; i < max_iter; ++i) {
+		
+		perturb(g, tour, curr_cost);
+		vnd(g, tour, curr_cost);
+	
+		if (curr_cost < best_cost) {
+			best_cost = curr_cost;
+
+		}
+	}
 }
